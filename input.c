@@ -45,7 +45,7 @@ byte	*buffer ;
 	char_ptr = buffer ;
 	char_count = *char_ptr++ ;
 	ch = read_char () ;
-	while ( ch != '\n' )
+	while ( ch != 10)	// newline doesnt work right? '\n' )
 	{
 		if (( ch == back_space ) && (( char_ptr - 1 ) != buffer ))
 		{
@@ -71,7 +71,7 @@ byte	*buffer ;
 				new_line () ;
 				echo ( "Input line too long. Flushing: " ) ;
 				ch = read_char () ;
-				while ( ch != '\n' )
+				while ( ch != 10)	//newline doesnt work right? '\n' )
 				{
 					print_char ( (word)ch ) ;
 					ch = read_char () ;
