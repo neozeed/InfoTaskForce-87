@@ -3,7 +3,9 @@
 
 /* only compiled in if TERMCAP is defined */
 
+#ifdef _WIN32
 #include 	<stdio.h>
+#endif
 #include 	"infocom.h"
 
 #ifdef	TERMCAP

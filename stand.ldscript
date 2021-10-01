@@ -1,0 +1,33 @@
+/*  ldscript for ns32k stand-alone programs */
+OUTPUT_ARCH(ns32k)
+ENTRY(_start)
+SECTIONS
+{
+  /*  Read-only sections, merged into text segment.  Assumes the
+      stand Makefile sets the start address via -Ttext.  */
+  .text :
+  {
+    *(.text)
+    *(.gnu.warning)
+    _etext = .;
+    PROVIDE (etext = .);
+  }
+  . = .;
+  . = ALIGN(0x10);
+  .data :
+  {
+    *(.got)
+    *(.data)
+    CONSTRUCTORS
+    _edata  =  .;
+    PROVIDE (edata = .);
+  }
+  .bss :
+  {
+    *(.bss)
+    *(COMMON)
+    . = ALIGN(4);
+    _end = . ;
+    PROVIDE (end = .);
+  }
+}

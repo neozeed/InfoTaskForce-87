@@ -1,13 +1,26 @@
 /* File: file.c */
 /* (C)opyright 1987 InfoTaskforce. */
 
+//#define DO_FILE 0
+
+#ifdef _WIN32
 #include	<stdio.h>
+FILE	*game_file ;
+#endif
 #include	"infocom.h"
 
 #define		name_size	10
 
 char	name[name_size + 1] ;
-FILE	*game_file ;
+
+
+//#ifndef _WIN32
+#define _binary_planetfa_dat_size binary_planetfa_dat_size
+#define _binary_planetfa_dat_end binary_planetfa_dat_end
+#define _binary_planetfa_dat_start binary_planetfa_dat_start
+//#endif
+extern unsigned char _binary_planetfa_dat_start[];
+int fseekp;
 
 read_header ( head )
 header	*head ;
@@ -25,7 +38,7 @@ header	*head ;
 		into a structure, the integer values are
 		interpreted differently by the two machines.
 	*/
-
+#if DO_FILE
 	header	buffer ;
 
 	if ( fseek ( game_file,0L,0 ) < 0 )
@@ -48,6 +61,17 @@ header	*head ;
 				error ( err_header ) ;
 		}
 	}
+#else
+	header buffer ;
+	fseekp=0;
+//printf("memcpy");fflush(stdout);
+	memcpy((char *)(&buffer),_binary_planetfa_dat_start,sizeof(header));
+	assign ( head,&buffer ) ;
+//printf("\n");fflush(stdout);
+	if (( head -> z_code_version != 0x03 ) ||( head -> score_or_time & 0x01 ))
+		error ( err_header ) ;
+	
+#endif
 }
 
 assign ( head,buffer )
@@ -104,19 +128,23 @@ open_file ( filename )
 char	*filename ;
 {
 	/* Open a File for Reading */
-
+fseekp=0;
+#if DO_FILE
 	game_file = fopen ( filename,"rb" ) ;
-	if ( game_file == (FILE *)0 )
+	if ( game_file == NULL)	/*(FILE *)0 )*/
 		return ( false ) ;
+#endif
 	return ( true ) ;
+
 }
 
 close_file ()
 {
 	/* Close an Open File */
-
+#ifdef DO_FILE
 	if ( fclose ( game_file ) )
 		printf ( "Cannot Close Game File\n" ) ;
+#endif
 }
 
 load_page ( block,num_blocks,ptr )
@@ -131,7 +159,7 @@ byte	*ptr ;
 		starting with block "block", at the
 		location pointed to by "ptr".
 	*/
-
+#if DO_FILE
 	offset = (long) block * block_size ;
 	if ( fseek ( game_file,offset,0 ) < 0 )
 	{
@@ -140,6 +168,13 @@ byte	*ptr ;
 	}
 	else
 		fread ((char *)ptr,block_size,(int)num_blocks,game_file);
+
+#else
+	offset = (long) block * block_size ;
+	fseekp=offset;
+	memcpy(ptr,_binary_planetfa_dat_start+fseekp,num_blocks*block_size);
+	fseekp=fseekp+(num_blocks*block_size);
+#endif
 }
 
 filename ()
@@ -185,7 +220,8 @@ save ()
 {
 	extern byte		*base_ptr ;
 	extern word		save_blocks ;
-
+	int fd;
+#if 0	
 	FILE	*save_file ;
 
 	/*
@@ -196,6 +232,7 @@ save ()
 	*/
 
 	filename () ;
+
 	save_file = fopen ( name,"wb" ) ;
 	if ( save_file == (FILE *)0 )
 	{
@@ -204,6 +241,7 @@ save ()
 	}
 	if (fwrite((char *)base_ptr,block_size,(int)save_blocks,save_file) != save_blocks)
 	{
+		fclose(save_file);
 		ret_value ( false ) ;
 		return ;
 	}
@@ -212,7 +250,10 @@ save ()
 		ret_value ( false ) ;
 		return ;
 	}
-	ret_value ( true ) ;
+#else
+		ret_value ( false ) ;
+		return ;
+#endif
 }
 
 Boolean
@@ -238,7 +279,7 @@ restore ()
 {
 	extern byte		*base_ptr ;
 	extern word		save_blocks ;
-
+#if 0
 	FILE	*save_file ;
 	header	test ;
 	Boolean	OK = true ;
@@ -264,5 +305,8 @@ restore ()
 		echo ( "Wrong Game or Version ...\nRestarting ...\n" ) ;
 		restart () ;
 	}
+#else
+		ret_value ( false ) ;
+		return ;
+#endif
 }
-

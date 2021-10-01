@@ -1,7 +1,7 @@
 /* File: io.c */
 /* (C)opyright 1987 InfoTaskforce. */
 
-#include	<stdio.h>
+//#include	<stdio.h>
 #include	"infocom.h"
 
 extern int	mx_scrx;
@@ -79,7 +79,7 @@ read_char ()
 	char		ch;
 	int		in;
 
-	in = getchar ();
+	in = c_getc ();
 	if ( in == -1 )
 	{
 		/* If input is from file, handle EOF */
@@ -91,7 +91,7 @@ read_char ()
 	else
 		ch = (char)in;
 	if ( echo_in )
-		putchar ( ch ) ;
+		c_putc ( ch ) ;
 	return ( ch ) ;
 }
 
@@ -101,7 +101,7 @@ char	c;
 	extern int	linecount;
 	extern Boolean	page_out;
 
-	putchar(c);
+	c_putc(c);
 	if (c == '\n')
 	{
 		if (linecount++ >= mx_scry-4)

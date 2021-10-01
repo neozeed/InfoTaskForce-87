@@ -79,6 +79,7 @@ char	table[] =	{	'a','b','c','d','e','f','g','h','i','j','k','l',
 						'\"','/','\\','-',':','(',')','\0','\0'
 					} ;
 
+#ifdef DO_FILE
 main ( argc,argv )
 int		argc ;
 char	*argv[] ;
@@ -138,6 +139,22 @@ char	*argv[] ;
 	else
 		usage ( argv[0] ) ;
 }
+#else
+main ( argc,argv )
+int		argc ;
+char	*argv[] ;
+{
+		if ( open_file ( argv[argc] ) )
+		{
+			init () ;
+			if ( play )
+				interp () ;
+			else
+				options ( head_info,objects,vocabulary,tree ) ;
+		}
+return 0;
+}
+#endif
 
 usage ( name )
 char	*name ;
