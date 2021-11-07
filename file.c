@@ -14,12 +14,11 @@ FILE	*game_file ;
 char	name[name_size + 1] ;
 
 
-//#ifndef _WIN32
-#define _binary_planetfa_dat_size binary_planetfa_dat_size
-#define _binary_planetfa_dat_end binary_planetfa_dat_end
-#define _binary_planetfa_dat_start binary_planetfa_dat_start
-//#endif
-extern unsigned char _binary_planetfa_dat_start[];
+unsigned char _binary_planetfa_dat_start[] = {
+#include "planetfa.h"
+};
+
+
 int fseekp;
 
 read_header ( head )

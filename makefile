@@ -38,11 +38,15 @@ default: infocom
 
 crt0.o:	crt0.s
 	a32k -o crt0.o crt0.s
-planetfa.o: planetfa.dat
-	xld  -b binary -o planetfa.o planetfa.dat
+# planetfa.o: planetfa.dat
+# 	xld  -b binary -o planetfa.o planetfa.dat
 #	d:/MinGW/bin/ld  -b binary -o planetfa.o planetfa.dat
 
-infocom: $(OBJECTS) planetfa.o
+# now including the game data as a headder
+# not all binutils can insert binary blobs
+#
+# infocom: $(OBJECTS) planetfa.o
+infocom: $(OBJECTS)
 	gcc -o infocom.exe planetfa.o $(OBJECTS)
 
 #ns32k stand alone
