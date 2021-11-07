@@ -8,10 +8,10 @@ void memory_init(){}
 void * 	malloc (int len)
 {
 void *p;
-printf("malloc %d offset is %d ",len,memory_offset);
+//printf("malloc %d offset is %d ",len,memory_offset);
 p=&memory_zone[memory_offset];
 memory_offset+=(len+10);
-printf("offset is now %d\n",memory_offset);
+//printf("offset is now %d\n",memory_offset);
 return(p);
 }
 
